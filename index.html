@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oromo Word Dictionary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Afaan Oromoo</h1>
+            <p class="subtitle">Oromo Word Dictionary</p>
+        </header>
+
+        <div class="search-container">
+            <div class="search-wrapper">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search words..."
+                    autocomplete="off"
+                >
+                <button id="searchButton">Search</button>
+            </div>
+        </div>
+
+        <div class="word-count" id="wordCount"></div>
+        <div class="word-list" id="wordList"></div>
+    </div>
+
+   <script>
+    // Dark mode detection
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        if (event.matches) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    });
+
+    // Word data
+    const words = [
+        'Abbaa',
+        'Abbaa Gadaa',
+        'Aaga',
+        'Aagoo',
+        'Aagimuu'
+    ];
+
+    const wordListEl = document.getElementById('wordList');
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+    const wordCountEl = document.getElementById('wordCount');
+
+    function renderWords(filteredWords) {
+        if (filteredWords.length === 0) {
+            wordListEl.innerHTML = `
+                <div class="no-results">
+                    <div class="no-results-icon">🔍</div>
+                    <div>No words found</div>
+                </div>
+            `;
+            wordCountEl.textContent = '';
+            return;
+        }
+
+        wordListEl.innerHTML = filteredWords.map(word => {
+            const filename = word.replace(/\s+/g, '_') + '.html';
+            return `<a href="${filename}" class="word-item">${word}</a>`;
+        }).join('');
+
+        wordCountEl.textContent = `${filteredWords.length} word${filteredWords.length !== 1 ? 's' : ''} found`;
+    }
+
+    function filterWords() {
+        const searchTerm = searchInput.value.toLowerCase().trim();
+
+        if (searchTerm === '') {
+            wordListEl.innerHTML = '';
+            wordCountEl.textContent = '';
+            return;
+        }
+
+        // ✅ Jalqaba irratti qofa walbira qabu (start with)
+        const filtered = words.filter(word =>
+            word.toLowerCase().startsWith(searchTerm)
+        );
+
+        renderWords(filtered);
+    }
+
+    searchInput.addEventListener('input', filterWords);
+    searchButton.addEventListener('click', filterWords);
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            filterWords();
+        }
+    });
+
+    wordListEl.innerHTML = '';
+    wordCountEl.textContent = '';
+</script>
+</body>
+</html>
